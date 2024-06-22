@@ -24,8 +24,11 @@ export class ConversionComponent implements OnInit {
   errorMessage = '';
   isConverting: boolean = false;
   rateDate: string = '';
+  currentRate: string = '';
+
 
   ngOnInit(): void {
+    // this will show all supported currencies if needed
     // this.service.getCurrencies().subscribe({
     //   next: (list) => this.availableCurrencies = list, error: (err) => {
     //     console.log('err', err);
@@ -65,18 +68,19 @@ export class ConversionComponent implements OnInit {
     }
 
     this.isConverting = true;
-    this.service.convertCurrencies(this.conversions, this.targetCurrency).subscribe({
-      next: (res) => {
-        this.result = res.toFixed(2);
-        this.isConverting = false;
-        this.rateDate = this.service.getLastUpdatedRates();
-      }, error: (err) => {
-        this.errorMessage = err;
-        this.isConverting = false;
-      }
-    })
-    // this.conversions = this.convertCurrencies(this.inputExpression, this.targetCurrency, this.exchangeRates);
-    // this.result = this.conversions.reduce((acc, conv) => acc + conv.convertedAmount, 0);
+    this.currentRate = this.targetCurrency;
+    setTimeout(() => {
+      this.service.convertCurrencies(this.conversions, this.targetCurrency).subscribe({
+        next: (res) => {
+          this.result = res.toFixed(2);
+          this.isConverting = false;
+          this.rateDate = this.service.getLastUpdatedRates();
+        }, error: (err) => {
+          this.errorMessage = err;
+        }
+      })
+      this.isConverting = false;
+    }, 500);
   }
 
 
@@ -105,40 +109,5 @@ export class ConversionComponent implements OnInit {
     this.conversions = [];
     this.result = '';
   }
-  //   private getExchangeRates(base: string): Observable<{ [key: string]: number }> {
-  //     const apiKey = 'YOUR_API_KEY';
-  //     const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${base}`;
-  //     return this.http.get<any>(url).pipe(
-  //       map(response => response.conversion_rates)
-  //     );
-  //   }
-
-  //   private extractBaseCurrency(): string {
-  //     const regex = /([A-Z]{3})/g;
-  //     const matches = this.inputExpression.match(regex);
-  //     return matches ? matches[0] : 'USD';
-  //   }
-
-  //   private parseExpression(expression: string): CurrencyConversion[] {
-  //     const regex = /([+-]?\s*\d+[A-Z]{3})/g;
-  //     const matches = Array.from(expression.matchAll(regex));
-
-  //     return matches.map((match, index) => {
-  //       const amount = parseFloat(match[0].replace(/[^\d.-]/g, ''));
-  //       const currency = match[0].replace(/[^A-Z]/g, '');
-  //       const operation = index > 0 ? expression.match(/[+\-*/]/g)?.[index - 1] : '';
-
-  //       return {
-  //         amount,
-  //         currency,
-  //         convertedAmount: 0,
-  //         operation
-  //       };
-  //     });
-  //   }
-
-
-
-
 
 }
