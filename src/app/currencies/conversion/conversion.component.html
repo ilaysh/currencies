@@ -1,0 +1,63 @@
+<div>
+
+    <div class="alert alert-danger" role="alert" *ngIf="errorMessage">{{errorMessage}} </div>
+    <div class="row g-3">
+        <div class="col-auto">
+            <label for="expression" class="visually-hidden">expression</label>
+            <input type="text" class="form-control" id="expression" [(ngModel)]="inputExpression"
+                placeholder="12USD + 3EUR - 3ILS" />
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-primary mb-3" [disabled]="!inputExpression"
+                (click)="show()">Show</button>
+        </div>
+    </div>
+    <button (click)="generateRandom()" class="btn btn-info btn-sm">Generate Random Data</button>
+</div>
+
+
+<div *ngIf="conversions.length > 0">
+    <div class="card-container">
+        <div *ngFor="let conversion of conversions" class="card-wrapper">
+            <div class="operation" *ngIf="conversion.operation">{{ conversion.operation }}</div>
+            <div class="card">
+                <h4>{{ conversion.amount |absNum}}</h4>
+                <h4>{{ conversion.currency }}</h4>
+            </div>
+        </div>
+
+        <div class="card-wrapper">
+            <div class="operation">=</div>
+            <div class="card">
+                <div class="spinner-border" style="width: 3rem; height: 3rem;margin:0 auto;" role="status"
+                    *ngIf="isConverting">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h4 *ngIf="result">{{ result }}</h4>
+                <h4 *ngIf="result">{{ targetCurrency }}</h4>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div *ngIf="availableCurrencies.length > 0">
+        <div class="row g-3">
+            <div class="col-auto">
+                <input type="text" id="targetCurrency" name="targetCurrency" [(ngModel)]="targetCurrency"
+                    class="form-control" placeholder="Target Currency" />
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary mb-3" [disabled]="!targetCurrency"
+                    (click)="convert()">Convert</button>
+            </div>
+        </div>
+
+        <div class="alert alert-info" role="alert" *ngIf="rateDate">Dates are updated to: {{rateDate}} </div>
+
+
+        <!-- <select id="targetCurrency" [(ngModel)]="targetCurrency">
+          <option *ngFor="let currency of availableCurrencies" [value]="currency">{{ currency }}</option>
+        </select> -->
+
+    </div>
+
+</div>
